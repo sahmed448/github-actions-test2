@@ -1,4 +1,4 @@
-name: List Incremental Files & Push SQL scripts to Dev S3 bucket..
+name: List Delta Files & Push SQL scripts to Dev S3 bucket..
 on: 
   pull_request:
     branches:
