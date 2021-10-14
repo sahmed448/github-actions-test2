@@ -1,12 +1,12 @@
 name: List Delta Files & Push SQL scripts to Dev S3 bucket..
 on: 
-  pull_request:
+  push:
     branches:
-      - main
+      - delta-1
 
 jobs:
 
-  generate-matrix:
+  build:
     name: Generate matrix for build
     runs-on: ubuntu-latest
     steps:
@@ -36,9 +36,9 @@ jobs:
           access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY  }}
           region: 'us-west-2'
-          source: 'generate-matrix'
+          source: 'build'
           destination_bucket: ${{ secrets.AWS_S3_BUCKET }}
-          destination_prefix: 'sql'
+          #destination_prefix: 'sql'
           exclude: '.git/*'
           delete: true
           quiet: false
