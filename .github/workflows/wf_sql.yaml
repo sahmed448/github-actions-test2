@@ -25,20 +25,32 @@ jobs:
             git fetch origin ${{ github.event.before }} --depth=1
             export DIFF=$( git diff --name-only ${{ github.event.before }} $GITHUB_SHA )
             echo "Diff between ${{ github.event.before }} and $GITHUB_SHA"
+            mkdir ./delta
+            cp DIFF ./delta
+            ls -a ./delta
+
           fi
           echo "$DIFF"
           # Escape newlines (replace \n with %0A)
           echo "::set-output name=diff::$( echo "$DIFF" | sed ':a;N;$!ba;s/\n/%0A/g' )"
 
-      - name: AWS S3 Sync Github Action
-        uses: sai-sharan/aws-s3-sync-action@v0.1.0
+      - name: Copy files to s3
+        uses: prewk/s3-cp-action@v2
         with:
-          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY  }}
-          region: 'us-west-2'
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          source: './delta'
+          dest: ${{ secrets.AWS_S3_BUCKET }}  
+
+      #- name: AWS S3 Sync Github Action
+        #uses: sai-sharan/aws-s3-sync-action@v0.1.0
+        #with:
+          #access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          #secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY  }}
+          #region: 'us-west-2'
           #source: 'build'
-          destination_bucket: ${{ secrets.AWS_S3_BUCKET }}
+          #destination_bucket: ${{ secrets.AWS_S3_BUCKET }}
           #destination_prefix: 'sql'
-          exclude: '.git/*'
-          delete: true
-          quiet: false
+          # exclude: '.git/*'
+          # delete: true
+          # quiet: false
