@@ -2,7 +2,7 @@ name: List Delta Files & Push SQL scripts to Dev S3 bucket..
 on: 
   push:
     branches:
-      - delta-1
+      - delta-x
 
 jobs:
 
