@@ -36,7 +36,7 @@ jobs:
           access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY  }}
           region: 'us-west-2'
-          source: 'build'
+          source: 'generate-matrix'
           destination_bucket: ${{ secrets.AWS_S3_BUCKET }}
           destination_prefix: 'sql'
           exclude: '.git/*'
