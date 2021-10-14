@@ -31,10 +31,10 @@ jobs:
           mkdir ./delta
           for files in $DIFF
           do 
-            cp $FILE ./delta
+            cp $FILE ./delta/
           done 
           ls -a ./delta
-            
+
           # Escape newlines (replace \n with %0A)
           echo "::set-output name=diff::$( echo "$DIFF" | sed ':a;N;$!ba;s/\n/%0A/g' )"
 
