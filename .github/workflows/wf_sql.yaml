@@ -31,7 +31,7 @@ jobs:
           mkdir ./delta
           for files in $DIFF
           do 
-            cp $FILE ./delta/
+            cp $FILE ./delta/.
           done 
           ls -a ./delta
 
