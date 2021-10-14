@@ -1,8 +1,8 @@
-name: List Incremental Files & Push SQL scripts to Dev S3 bucket
+name: List Incremental Files & Push SQL scripts to Dev S3 bucket..
 on: 
-  push:
+  pull_request:
     branches:
-      - delta
+      - main
 
 jobs:
 
@@ -15,11 +15,11 @@ jobs:
         id: diff
         run: |
           # See https://github.community/t/check-pushed-file-changes-with-git-diff-tree-in-github-actions/17220/10
-          if [ $GITHUB_BASE_REF/SQL/ ]; then
+          if [ $GITHUB_BASE_REF ]; then
             # Pull Request
-            git fetch origin $GITHUB_BASE_REF/SQL/ --depth=1
-            export DIFF=$( git diff --name-only origin/$GITHUB_BASE_REF/SQL/ $GITHUB_SHA )
-            echo "Diff between origin/$GITHUB_BASE_REF/SQL/ and $GITHUB_SHA"
+            git fetch origin $GITHUB_BASE_REF --depth=1
+            export DIFF=$( git diff --name-only origin/$GITHUB_BASE_REF $GITHUB_SHA )
+            echo "Diff between origin/$GITHUB_BASE_REF and $GITHUB_SHA"
           else
             # Push
             git fetch origin ${{ github.event.before }} --depth=1
@@ -29,3 +29,16 @@ jobs:
           echo "$DIFF"
           # Escape newlines (replace \n with %0A)
           echo "::set-output name=diff::$( echo "$DIFF" | sed ':a;N;$!ba;s/\n/%0A/g' )"
+
+      - name: AWS S3 Sync Github Action
+        uses: sai-sharan/aws-s3-sync-action@v0.1.0
+        with:
+          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY  }}
+          region: 'us-west-2'
+          source: 'build'
+          destination_bucket: ${{ secrets.AWS_S3_BUCKET }}
+          destination_prefix: 'sql'
+          exclude: '.git/*'
+          delete: true
+          quiet: false
